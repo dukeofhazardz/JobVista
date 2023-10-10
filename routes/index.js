@@ -9,10 +9,13 @@ router.use(express.urlencoded({ extended: true }));
 
 router.get('/', Auth.getHome);
 router.get('/usercount', User.nbUsers);
+router.get('/userprofile', User.getMe);
 router.get('/signup', Auth.getSignup);
 router.get('/login', Auth.getLogin);
 router.post('/signup', Auth.postSignup);
 router.post('/login', Auth.postLogin);
+router.post('/connect', Auth.getConnect);
+router.post('/disconnect', Auth.getDisconnect);
 /*
 router.get('/profile', User.getProfile);
 */

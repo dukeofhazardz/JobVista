@@ -1,4 +1,6 @@
 import dbClient from '../utils/db';
+import redisClient from '../utils/redis';
+import { v4 as uuidv4 } from 'uuid';
 import sha1 from 'sha1';
 const path = require('path');
 const fs = require('fs');
@@ -6,6 +8,41 @@ const FOLDER_PATH = './job_vista_resumes/';
 let filePath = '';
 
 const Auth = {
+
+    async getConnect(request, response) {
+    const authorization = request.header('Authorization') || null;
+    if (!authorization) return response.status(401).send({ error: 'Unauthorized' });
+
+    const buff = Buffer.from(authorization.replace('Basic ', ''), 'base64');
+    const credentials = {
+      email: buff.toString('utf-8').split(':')[0],
+      password: buff.toString('utf-8').split(':')[1],
+    };
+
+    if (!credentials.email || !credentials.password) return response.status(401).send({ error: 'Unauthorized' });
+
+    credentials.password = sha1(credentials.password);
+
+    const userExists = await dbClient.db.collection('users').findOne(credentials);
+    if (!userExists) return response.status(401).send({ error: 'Unauthorized' });
+
+    const token = uuidv4();
+    const key = `auth_${token}`;
+    await redisClient.set(key, userExists._id.toString(), 86400);
+
+    return response.status(200).send({ token });
+  },
+
+  async getDisconnect(request, response) {
+    const token = request.header('X-Token') || null;
+    if (!token) return response.status(401).send({ error: 'Unauthorized' });
+
+    const redisToken = await redisClient.get(`auth_${token}`);
+    if (!redisToken) return response.status(401).send({ error: 'Unauthorized' });
+
+    await redisClient.del(`auth_${token}`);
+    return response.status(204).send();
+  },
     async getHome(req, res) {
         return res.render('base', {title: 'JobVista'});
     },
