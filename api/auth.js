@@ -1,5 +1,9 @@
 import dbClient from '../utils/db';
 import sha1 from 'sha1';
+const path = require('path');
+const fs = require('fs');
+const FOLDER_PATH = './job_vista_resumes/';
+let filePath = '';
 
 const Auth = {
     async getHome(req, res) {
@@ -38,7 +42,22 @@ const Auth = {
         if (existingUser) {
             return res.status(400).json({error: 'User already exist'});
         }
+        // Uploading resume
+        if (req.files) {
+            const resume = req.files.resume;
+            filePath = path.join(FOLDER_PATH + email, resume.name);
+            fs.mkdirSync(FOLDER_PATH + email, { recursive: true });
+            resume.mv(filePath, (err) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log('Resume uploaded');
+                }
+            });
+        }
+        // hashing password
         const hashedPW = sha1(password);
+        // curating new user
         const newUser = {
             firstName: firstName,
             lastName: lastName,
@@ -46,6 +65,7 @@ const Auth = {
             hashedPassword: hashedPW,
             phoneNo: phoneNo,
             address: address,
+            resumePath: filePath,
         };
         const result = await dbClient.client.db(dbClient.database).collection('users').insertOne(newUser);
         return res.status(201).json({
@@ -55,6 +75,7 @@ const Auth = {
             email: email,
             phoneNo: phoneNo,
             address: address,
+            resumeAt: filePath,
         });
 
     },
