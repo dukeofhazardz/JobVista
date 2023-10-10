@@ -14,7 +14,6 @@ router.get('/login', Auth.getLogin);
 router.post('/signup', Auth.postSignup);
 router.post('/login', Auth.postLogin);
 /*
-router.get('/home', Auth.getHome);
 router.get('/profile', User.getProfile);
 */
 

@@ -1,12 +1,14 @@
 import routes from './routes';
 const path = require('path');
 const express = require('express');
+const upload = require('express-fileupload');
 
 const port = 5000
 const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+app.use(upload());
 app.use('/', routes);
 
 app.listen(port, (err) => {
