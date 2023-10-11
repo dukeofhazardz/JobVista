@@ -1,5 +1,9 @@
 import dbClient from '../utils/db';
+import redisClient from '../utils/redis';
 import sha1 from 'sha1';
+import { v4 } from 'uuid';
+import { parse, serialize } from 'cookie';
+const { ObjectId } = require('mongodb');
 const path = require('path');
 const fs = require('fs');
 const FOLDER_PATH = './job_vista_resumes/';
@@ -7,7 +11,18 @@ let filePath = '';
 
 const Auth = {
     async getHome(req, res) {
-        return res.render('base', {title: 'JobVista'});
+        let user = null;
+        const cookies = parse(req.headers.cookie || '');
+        const token = cookies.sessionId;
+        if (token) {
+            const key = `auth_${token}`;
+            const userId = await redisClient.get(key);
+            if (userId) {
+                user = await dbClient.client.db(dbClient.database).collection('users').findOne({_id: ObjectId(userId)});
+            }
+        }
+        const alt = 'dear';
+        return res.render('base', { user, alt });
     },
 
     async getSignup(req, res) {
@@ -67,16 +82,8 @@ const Auth = {
             address: address,
             resumePath: filePath,
         };
-        const result = await dbClient.client.db(dbClient.database).collection('users').insertOne(newUser);
-        return res.status(201).json({
-            id: result.insertedId,
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            phoneNo: phoneNo,
-            address: address,
-            resumeAt: filePath,
-        });
+        await dbClient.client.db(dbClient.database).collection('users').insertOne(newUser);
+        return res.redirect(301, '/login');
 
     },
 
@@ -97,8 +104,27 @@ const Auth = {
         if (!user) {
             return res.status(400).json({error: `Password is incorrect`});
         }
-        return res.status(201).json({'id': user._id.toString(), 'email': user.email});
-    }
+        const sessionId = v4();
+        const key = `auth_${sessionId}`;
+        const value = user._id.toString();
+        const duration = 24 * 60 * 60; // 24 hours (in seconds)
+        res.setHeader('Set-Cookie', serialize('sessionId', sessionId, { httpOnly: true, maxAge: duration }));
+        await redisClient.set(key, value, duration);
+        res.set('Cookie', sessionId);
+        return res.redirect(301, '/');
+    },
+
+    async logout(req, res) {
+        const cookies = parse(req.headers.cookie || '');
+        const token = cookies.sessionId;
+        
+        if (token) {
+            const key = `auth_${token}`;
+            await redisClient.del(key);
+            res.setHeader('Set-Cookie', serialize('sessionId', '', { httpOnly: true, expires: new Date(0) }));
+        }
+        return res.redirect(301, '/login');
+    },
 };
 
 export default Auth;

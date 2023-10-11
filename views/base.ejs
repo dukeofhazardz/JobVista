@@ -1,8 +1,14 @@
 <%- include('header') -%>
 
-<h1>Welcome to JobVista</h1>
+<h1>Hello <%= user ? user.firstName : alt %></h1>
+<h2>Welcome to JobVista</h2>
 
-<p>Don't have an account? <a href="/signup">Register here</a></p>
-<p>Already have an account? <a href="/login">Login here</a></p>
+<% if (user) { %>
+    <p>Leaving? <a href="/logout">Logout</a></p>
+<% } else { %>
+    <p>Don't have an account? <a href="/signup">Register here</a></p>
+    <p>Already have an account? <a href="/login">Login here</a></p>
+<% } %>
+<p>View profile <a href="/profile">here</a></p>
 
 <%- include('footer') -%>

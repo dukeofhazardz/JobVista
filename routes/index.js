@@ -8,13 +8,12 @@ router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
 router.get('/', Auth.getHome);
+router.get('/logout', Auth.logout);
 router.get('/usercount', User.nbUsers);
 router.get('/signup', Auth.getSignup);
 router.get('/login', Auth.getLogin);
 router.post('/signup', Auth.postSignup);
 router.post('/login', Auth.postLogin);
-/*
 router.get('/profile', User.getProfile);
-*/
 
 export default router;
