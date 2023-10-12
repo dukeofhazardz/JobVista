@@ -1,5 +1,13 @@
 <%- include('header') -%>
 
+<% if (typeof user !== 'undefined' && user) { %>
+    <form action="/logout" method="POST">
+        <p>Leaving? <button type="submit">Logout</button></p>
+    </form>
+<% } else { %>
+    <h1>Login here</h1>
+<% } %>
+
 <h1>JobVista Login</h1>
 <div class="text-center center-div" id="login">
     <div class="container w-25 border py-5">
