@@ -1,9 +1,12 @@
 <%- include('header') -%>
 <h1>Hello <%- user.firstName -%></h1>
 
-<p>Edit profile <a href="/edit">edit</a></p>
+<p>Edit profile <a href="/settings">edit</a></p>
 <p>Go <a href="/">Home</a></p>
 
-<p>Leaving? <a href="/logout">Logout</a></p>
+<p>Download resume <a href="/download">download</a></p>
+<form action="/logout" method="POST">
+    <p>Leaving? <button type="submit">Logout</button></p>
+</form>
 
 <%- include('footer') -%>
