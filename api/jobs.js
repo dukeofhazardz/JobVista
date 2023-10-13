@@ -3,7 +3,7 @@ const URL = 'https://himalayas.app/jobs/api';
 
 async function fetchJobs(url) {
     return new Promise((resolve, reject) => {
-        const response = request.get(url, (error, response) => {
+        request.get(url, (error, response) => {
             if (error) {
                 reject(error);
             } else if (response.statusCode === 200) {
