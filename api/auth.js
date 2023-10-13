@@ -83,6 +83,7 @@ const Auth = {
             resumePath: filePath,
             createdAt: new Date(),
             updatedAt: new Date(),
+            jobs: [],
         };
         await dbClient.client.db(dbClient.database).collection('users').insertOne(newUser);
         res.cookie('email')

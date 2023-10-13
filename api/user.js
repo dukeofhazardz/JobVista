@@ -1,5 +1,4 @@
 import dbClient from "../utils/db";
-import redisClient from '../utils/redis';
 const path = require('path');
 const fs = require('fs');
 const FOLDER_PATH = './job_vista_resumes/';
