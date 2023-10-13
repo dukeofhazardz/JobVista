@@ -59,6 +59,7 @@ const User = {
                 });
                 await dbClient.client.db(dbClient.database).collection('users').updateOne({_id: ObjectId(userId)}, { $set: {resumePath: filePath}});
             }
+            await dbClient.client.db(dbClient.database).collection('users').updateOne({_id: ObjectId(userId)}, { $set: {updatedAt: new Date()}});
             return res.redirect(301, '/settings');
         }
         return res.redirect(301, '/login');
@@ -67,21 +68,21 @@ const User = {
     async getResume(req, res) {
         const userId = await req.redisClient.get('session:' + req.session.id);
         if (userId) {
-            console.log(userId)
             const user = await dbClient.client.db(dbClient.database).collection('users').findOne({_id: ObjectId(userId)});
             const filePath = user.resumePath;
             if (fs.existsSync(filePath)) {
-                res.setHeader('Content-disposition', `attachment; filename=${user.firstName}`);
+                const ext = filePath.split('.')[-1];
+                res.setHeader('Content-disposition', `attachment; filename=${user.firstName}.${ext}`);
                 res.setHeader('Content-type', 'application/octet-stream');
                 
                 const fileStream = fs.createReadStream(filePath);
-                console.log('about to download')
                 fileStream.pipe(res);
             } else {
                 res.status(404).json({error:'File not found'});
             }
+        } else {
+            return res.redirect(301, '/login');
         }
-        return res.redirect(301, '/login');
     },
 };
 

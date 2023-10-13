@@ -81,6 +81,8 @@ const Auth = {
             phoneNo: phoneNo,
             address: address,
             resumePath: filePath,
+            createdAt: new Date(),
+            updatedAt: new Date(),
         };
         await dbClient.client.db(dbClient.database).collection('users').insertOne(newUser);
         res.cookie('email')
