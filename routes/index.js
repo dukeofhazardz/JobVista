@@ -33,5 +33,6 @@ router.get('/profile', User.getProfile);
 router.get('/settings', User.getSettings);
 router.post('/settings', User.postSettings);
 router.get('/download', User.getResume);
+router.get('/jobboard', Jobs.getJobs);
 
 export default router;

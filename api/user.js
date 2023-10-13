@@ -71,7 +71,8 @@ const User = {
             const user = await dbClient.client.db(dbClient.database).collection('users').findOne({_id: ObjectId(userId)});
             const filePath = user.resumePath;
             if (fs.existsSync(filePath)) {
-                const ext = filePath.split('.')[-1];
+                const fileArray = filePath.split('.');
+                const ext = fileArray[fileArray.length - 1];
                 res.setHeader('Content-disposition', `attachment; filename=${user.firstName}.${ext}`);
                 res.setHeader('Content-type', 'application/octet-stream');
                 
