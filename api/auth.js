@@ -12,17 +12,14 @@ let filePath = '';
 
 const Auth = {
   async getHome(req, res) {
-    const URL = 'https://himalayas.app/jobs/api?limit=100';
-    const jobs = await fetch(URL).then((response) => response.json());
-
     const userId = await req.redisClient.get(`session:${req.session.id}`);
     console.log(userId);
     console.log(`session:${req.session.id}`);
     if (userId) {
       const user = await dbClient.client.db(dbClient.database).collection('users').findOne({ _id: ObjectId(userId) });
-      return res.render('base', { user, jobs });
+      return res.render('base', { user });
     }
-    return res.render('base', { jobs });
+    return res.render('base');
   },
 
   async getSignup(req, res) {

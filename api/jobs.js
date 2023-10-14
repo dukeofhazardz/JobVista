@@ -22,8 +22,27 @@ async function fetchJobs(url) {
 const Jobs = {
   async getJobs(req, res) {
     const response = await fetchJobs(URL);
-    return res.json({ status: response.statusCode, data: JSON.parse(response.body) });
+    if (response.statusCode == 200) {
+      const data = JSON.parse(response.body);
+      return res.render('jobs', { data });
+    }
+    return res.redirect(response.statusCode, '/');
   },
+
+  async getJob(req, res) {
+    const {title} = req.params;
+    const response = await fetchJobs(URL);
+    if (response.statusCode == 200) {
+     const data = JSON.parse(response.body);
+     const job = data.jobs.find(job => job.title === title);
+      if (job) {
+        console.log(job);
+        return res.render('job-details', { job });
+      }
+    }
+    return res.redirect(response.statusCode, '/jobboard');
+  },
+
 
   async postApply(req, res) {
     const userId = await req.redisClient.get(`session:${req.session.id}`);
