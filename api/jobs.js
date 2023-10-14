@@ -1,5 +1,6 @@
+import { json } from 'body-parser';
 import dbClient from '../utils/db';
-
+import redisClient from '../utils/redis';
 const { ObjectId } = require('mongodb');
 const request = require('request');
 
@@ -19,11 +20,25 @@ async function fetchJobs(url) {
   });
 }
 
-const Jobs = {
-  async getJobs(req, res) {
+async function getJobsFromRedis() {
+  if (await redisClient.get('jobs') === null) {
     const response = await fetchJobs(URL);
     if (response.statusCode == 200) {
       const data = JSON.parse(response.body);
+      const duration = 24 * 60 * 60;
+      await redisClient.set('jobs', JSON.stringify(data), duration);
+    } else {
+      return new Error('Error getting response from API')
+    }
+  }
+  const jobs = JSON.parse(await redisClient.get('jobs'));
+  return jobs;
+}
+
+const Jobs = {
+  async getJobs(req, res) {
+    const data = await getJobsFromRedis();
+    if (data) {
       return res.render('jobs', { data });
     }
     return res.redirect(response.statusCode, '/');
@@ -31,9 +46,8 @@ const Jobs = {
 
   async getJob(req, res) {
     const {title} = req.params;
-    const response = await fetchJobs(URL);
-    if (response.statusCode == 200) {
-     const data = JSON.parse(response.body);
+    const data = await getJobsFromRedis();
+    if (data) {
      const job = data.jobs.find(job => job.title === title);
       if (job) {
         console.log(job);
