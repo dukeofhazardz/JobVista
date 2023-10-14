@@ -1,21 +1,37 @@
 <%- include('header') -%>
 
 <% if (typeof user !== 'undefined' && user && user.firstName) { %>
-    <h1>Hello <%= user.firstName %></h1>
+<h1>Hello <%= user.firstName %></h1>
 <% } else { %>
-    <h1>Hello dear</h1>
+<h1>Hello dear</h1>
 <% } %>
 
 <h2>Welcome to JobVista</h2>
 
 <% if (typeof user !== 'undefined' && user) { %>
-    <form action="/logout" method="POST">
-        <p>Leaving? <button type="submit">Logout</button></p>
-    </form>
+<form action="/logout" method="POST">
+    <p>Leaving? <button type="submit">Logout</button></p>
+</form>
 <% } else { %>
-    <p>Don't have an account? <a href="/signup">Register here</a></p>
-    <p>Already have an account? <a href="/login">Login here</a></p>
+<p>Don't have an account? <a href="/signup">Register here</a></p>
+<p>Already have an account? <a href="/login">Login here</a></p>
 <% } %>
 <p>View profile <a href="/profile">here</a></p>
 
-<%- include('footer') -%>
+<div class>
+    <% jobs.jobs.forEach((job)=>{ %>
+    <div class="jobStyle">
+        <h3><%= job.title %></h3>
+        <h3><%= job.companyName %></h3>
+        <img width="200px" height="200px" src="<%= job.companyLogo %>"
+            alt="company logo" />
+        <p>
+
+            <%= job.excerpt %>
+        </p>
+        <a href="jobs/<%= job.guid %>">View</a>
+    </div>
+    <% }) %>
+    <div>
+
+        <%- include('footer') -%>
