@@ -18,4 +18,20 @@
 <% } %>
 <p>View profile <a href="/profile">here</a></p>
 
+<div class>
+    <% jobs.jobs.forEach((job)=>{ %>
+    <div class="jobStyle">
+        <h3><%= job.title %></h3>
+        <h3><%= job.companyName %></h3>
+        <img width="200px" height="200px" src="<%= job.companyLogo %>"
+            alt="company logo" />
+        <p>
+
+            <%= job.excerpt %>
+        </p>
+        <a href="jobs/<%= job.guid %>">View</a>
+    </div>
+    <% }) %>
+    <div>
+
 <%- include('footer') -%>
