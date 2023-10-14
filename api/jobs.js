@@ -36,7 +36,6 @@ const Jobs = {
      const data = JSON.parse(response.body);
      const job = data.jobs.find(job => job.title === title);
       if (job) {
-        console.log(job);
         return res.render('job-details', { job });
       }
     }
