@@ -1,9 +1,10 @@
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
+
 const { ObjectId } = require('mongodb');
 const request = require('request');
 
-const URL = 'https://himalayas.app/jobs/api?limit=100';
+const URL = 'https://himalayas.app/jobs/api';
 
 async function fetchJobs(url) {
   return new Promise((resolve, reject) => {
@@ -43,20 +44,24 @@ async function getJobsFromRedis() {
 
 const Jobs = {
   async getJobs(req, res) {
+    const PAGE_LIMIT = 50;
+    const offset = req.query.offset || 0;
     const data = await getJobsFromRedis();
     if (data) {
-      return res.render('jobs', { data });
-    } else {
-      console.log('jobs not found')
-      return res.status(404).json({error: 'Not Found'});
+      const next = offset + PAGE_LIMIT;
+      const jobs = data.jobs.slice(offset, offset + PAGE_LIMIT);
+      if (jobs.length > offset) {
+        return res.render('jobs', { jobs, offset: next });
+      }
     }
+    return res.redirect(301, '/');
   },
 
   async getJob(req, res) {
-    const {title} = req.params;
+    const { title } = req.params;
     const data = await getJobsFromRedis();
     if (data) {
-     const job = data.jobs.find(job => job.title === title);
+      const job = data.jobs.find((job) => job.title === title);
       if (job) {
         return res.render('job-details', { job });
       }
@@ -64,6 +69,7 @@ const Jobs = {
       console.log('job not found')
       return res.status(404).json({error: 'Not Found'});
     }
+    return res.redirect(301, '/jobboard');
   },
 
   async postApply(req, res) {
