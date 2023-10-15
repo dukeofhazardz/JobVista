@@ -15,7 +15,6 @@ const User = {
             const user = await dbClient.client.db(dbClient.database).collection('users').findOne({_id: ObjectId(userId)});
             return res.render('profile', { user });
         }
-        console.log('no userId')
         return res.redirect(301, '/login');
     },
 

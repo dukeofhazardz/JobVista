@@ -1,5 +1,4 @@
 import sha1 from 'sha1';
-import fetch from 'node-fetch';
 import dbClient from '../utils/db';
 
 
@@ -13,8 +12,6 @@ let filePath = '';
 const Auth = {
   async getHome(req, res) {
     const userId = await req.redisClient.get(`session:${req.session.id}`);
-    console.log(userId);
-    console.log(`session:${req.session.id}`);
     if (userId) {
       const user = await dbClient.client.db(dbClient.database).collection('users').findOne({ _id: ObjectId(userId) });
       return res.render('base', { user });
