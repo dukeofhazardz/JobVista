@@ -1,5 +1,4 @@
 import dbClient from "../utils/db";
-import redisClient from '../utils/redis';
 const path = require('path');
 const fs = require('fs');
 const FOLDER_PATH = './job_vista_resumes/';
@@ -16,7 +15,6 @@ const User = {
             const user = await dbClient.client.db(dbClient.database).collection('users').findOne({_id: ObjectId(userId)});
             return res.render('profile', { user });
         }
-        console.log('no userId')
         return res.redirect(301, '/login');
     },
 

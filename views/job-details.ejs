@@ -1,0 +1,19 @@
+<%- include('header') -%>
+
+<div class>
+    
+    <div class="jobStyle">
+        <h3><%= job.title %></h3>
+        <h3><%= job.companyName %></h3>
+        <img width="200px" height="200px" src="<%= job.companyLogo %>"
+            alt="company logo" />
+        <p>
+
+            <%= job.excerpt %>
+        </p>
+        <a href="<%= job.applicationLink %>">Apply</a>
+    </div>
+ 
+    <div>
+
+<%- include('footer') -%>
