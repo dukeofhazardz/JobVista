@@ -1,4 +1,3 @@
-import { json } from 'body-parser';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
 const { ObjectId } = require('mongodb');
@@ -21,18 +20,25 @@ async function fetchJobs(url) {
 }
 
 async function getJobsFromRedis() {
-  if (await redisClient.get('jobs') === null) {
-    const response = await fetchJobs(URL);
-    if (response.statusCode == 200) {
-      const data = JSON.parse(response.body);
-      const duration = 24 * 60 * 60;
-      await redisClient.set('jobs', JSON.stringify(data), duration);
+  try {
+    const cachedJobs = await redisClient.get('jobs');
+    if (cachedJobs === null) {
+      const response = await fetchJobs(URL);
+      if (response.statusCode == 200) {
+        const data = JSON.parse(response.body);
+        const duration = 24 * 60 * 60;
+        await redisClient.set('jobs', JSON.stringify(data), duration);
+        return data;
+      } else {
+        return new Error('Error getting response from API')
+      }
     } else {
-      return new Error('Error getting response from API')
+      return JSON.parse(cachedJobs);
     }
+  } catch (error) {
+    console.error('Error in getJobsFromRedis:', error);
+    throw error; 
   }
-  const jobs = JSON.parse(await redisClient.get('jobs'));
-  return jobs;
 }
 
 const Jobs = {
@@ -40,8 +46,10 @@ const Jobs = {
     const data = await getJobsFromRedis();
     if (data) {
       return res.render('jobs', { data });
+    } else {
+      console.log('jobs not found')
+      return res.status(404).json({error: 'Not Found'});
     }
-    return res.redirect(response.statusCode, '/');
   },
 
   async getJob(req, res) {
@@ -50,13 +58,13 @@ const Jobs = {
     if (data) {
      const job = data.jobs.find(job => job.title === title);
       if (job) {
-        console.log(job);
         return res.render('job-details', { job });
       }
+    } else {
+      console.log('job not found')
+      return res.status(404).json({error: 'Not Found'});
     }
-    return res.redirect(response.statusCode, '/jobboard');
   },
-
 
   async postApply(req, res) {
     const userId = await req.redisClient.get(`session:${req.session.id}`);
@@ -69,6 +77,13 @@ const Jobs = {
       return res.redirect(301, '/jobboard');
     }
     return res.redirect(301, '/login');
+  },
+
+  async getSearch(req, res) {
+    let payload = req.body.payload.trim();
+    const data = await getJobsFromRedis();
+    const searchResult = data.jobs.filter(job => job.title.toLowerCase().includes(payload.toLowerCase()));
+    res.send({payload: searchResult});
   },
 };
 

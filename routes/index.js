@@ -23,6 +23,11 @@ router.use((req, res, next) => {
   next();
 });
 
+router.use((req, res, next) => {
+  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  next();
+});
+
 router.get('/', Auth.getHome);
 router.get('/usercount', User.nbUsers);
 router.get('/signup', Auth.getSignup);
@@ -36,5 +41,6 @@ router.post('/settings', User.postSettings);
 router.get('/download', User.getResume);
 router.get('/jobboard', Jobs.getJobs);
 router.get('/jobs/:title', Jobs.getJob);
+router.post('/jobs/search', Jobs.getSearch);
 
 export default router;
