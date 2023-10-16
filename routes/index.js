@@ -28,7 +28,7 @@ router.use((req, res, next) => {
   next();
 });
 
-router.get('/', Auth.getHome);
+router.get('/', Jobs.getJobs);
 router.get('/usercount', User.nbUsers);
 router.get('/signup', Auth.getSignup);
 router.get('/login', Auth.getLogin);

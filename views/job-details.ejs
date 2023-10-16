@@ -1,19 +1,60 @@
 <%- include('header') -%>
 
-<div class>
+<div class="container">
     
-    <div class="jobStyle">
-        <h3><%= job.title %></h3>
-        <h3><%= job.companyName %></h3>
-        <img width="200px" height="200px" src="<%= job.companyLogo %>"
-            alt="company logo" />
-        <p>
 
-            <%= job.excerpt %>
-        </p>
-        <a href="<%= job.applicationLink %>">Apply</a>
+    <div class="card">
+        <div class="row row-cols-1 row-cols-md-3 g-2">
+            <div class="col">
+      <img src="<%= job.companyLogo %>" class=" text-left img-fluid img-thumbnail hover-shadow w-50" alt="company logo"/>
+      </div>
+        <div class="col">
+        <h1 class="flex-center"><%= job.companyName %></h1>
+        </div>
+          <div class="col">
+    
+            <% if (job.minSalary) { %>
+               <span class="badge badge-primary"> <i class="fas fa-money-bill "></i> $<%= job.minSalary %> - $<%= job.maxSalary %></span>
+                <% } %>
+                  </div>
+        </div>
+        
+      <div class="card-body">
+        <h2 class="card-title"><%= job.title %></h2>
+      
+       
+            <% if (job.locationRestrictions.length !== 0) {
+            
+            job.locationRestrictions.forEach((location, index)=>{ %>
+                  <% if (index < 5){ %>
+            <span class="badge badge-info"><%= location %> <i class="fas fa-location"></i></span>
+            <% } }) }
+            else {%>
+<span class="badge badge-info"> Anywhere <i class="fas fa-location"></i></span>
+           <% } %>
+ <% job.categories.forEach((category, index)=>{ %>
+    <% if (index < 5){ %>
+            <span class="badge badge-secondary"><%= category %></span>
+            <% } }) %>
+       
+      <div class="align-items-right text-right">
+          <a class ="btn btn-primary btn-sm mt-2" href="<%= job.applicationLink %>">Application  <i class="fas fa-briefcase"></i></a>
+          </div>
+      </div>
+
+      <div class="card-footer">
+        <blockquote class="text-justify">
+            <%- job.description %>
+          </blockquote>
+      </div>
+
+       <div class="text-center mb-4">
+      <a class ="btn btn-primary btn-sm mt-2" href="<%= job.applicationLink %>">Goto Application  <i class="fas fa-briefcase"></i></a>
+     
+ </div>
     </div>
- 
+
+
     <div>
 
 <%- include('footer') -%>
