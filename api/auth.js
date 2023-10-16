@@ -1,40 +1,37 @@
 import sha1 from 'sha1';
 import dbClient from '../utils/db';
+import User from '../utils/helper';
 
-
-const { ObjectId } = require('mongodb');
 const path = require('path');
 const fs = require('fs');
 
-const FOLDER_PATH = './job_vista_resumes/';
-let filePath = '';
+const STATIC_PATH = './static/';
+const RESUME_PATH = '/job_vista_resumes/';
+const AVATAR_PATH = '/job_vista_avatars/';
+let resumeFilePath = '';
+let avatarFilePath = '';
+let imageFile = '';
+let resumeFile = '';
 
 const Auth = {
   async getHome(req, res) {
-    const userId = await req.redisClient.get(`session:${req.session.id}`);
-    if (userId) {
-      const user = await dbClient.client.db(dbClient.database).collection('users').findOne({ _id: ObjectId(userId) });
-      return res.render('base', { user });
-    }
-    return res.render('base');
+    const user = await User.getUser(req);
+    return res.redirect(301, '/jobboard', { user });
   },
 
   async getSignup(req, res) {
-    return res.render('signup');
+    const user = await User.getUser(req);
+    return res.render('signup', { user });
   },
 
   async getLogin(req, res) {
-    const userId = await req.redisClient.get(`session:${req.session.id}`);
-    if (userId) {
-      const user = await dbClient.client.db(dbClient.database).collection('users').findOne({ _id: ObjectId(userId) });
-      return res.render('login', { user });
-    }
-    return res.render('login');
+    const user = await User.getUser(req);
+    return res.render('login', { user });
   },
 
   async postSignup(req, res) {
     const {
-      firstName, lastName, email, password, phoneNo, address,
+      firstName, lastName, email, password, phoneNo, address, occupation, skills,
     } = req.body;
     if (!firstName) {
       return res.status(400).json({ error: 'Missing First Name' });
@@ -54,6 +51,9 @@ const Auth = {
     if (!address) {
       return res.status(400).json({ error: 'Missing Address' });
     }
+    if (!occupation) {
+      return res.status(400).json({ error: 'Missing Occupation' });
+    }
     const existingUser = await dbClient.client.db(dbClient.database).collection('users').findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: 'User already exist' });
@@ -61,13 +61,26 @@ const Auth = {
     // Uploading resume
     if (req.files) {
       const { resume } = req.files;
-      filePath = path.join(FOLDER_PATH + email, resume.name);
-      fs.mkdirSync(FOLDER_PATH + email, { recursive: true });
-      resume.mv(filePath, (err) => {
+      resumeFilePath = path.join(STATIC_PATH + RESUME_PATH + email, resume.name);
+      resumeFile = path.join(RESUME_PATH + email, resume.name);
+      fs.mkdirSync(STATIC_PATH + RESUME_PATH + email, { recursive: true });
+      resume.mv(resumeFilePath, (err) => {
         if (err) {
           console.log(err);
         } else {
           console.log('Resume uploaded');
+        }
+      });
+
+      const { avatar } = req.files;
+      avatarFilePath = path.join(STATIC_PATH + AVATAR_PATH + email, avatar.name);
+      imageFile = path.join(AVATAR_PATH + email, avatar.name);
+      fs.mkdirSync(STATIC_PATH + AVATAR_PATH + email, { recursive: true });
+      avatar.mv(avatarFilePath, (err) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log('avatar uploaded');
         }
       });
     }
@@ -81,7 +94,10 @@ const Auth = {
       hashedPassword: hashedPW,
       phoneNo,
       address,
-      resumePath: filePath,
+      occupation,
+      skills,
+      resumePath: resumeFile,
+      avatarPath: imageFile,
       createdAt: new Date(),
       updatedAt: new Date(),
       jobs: [],

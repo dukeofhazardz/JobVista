@@ -1,5 +1,6 @@
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
+import User from '../utils/helper';
 
 const { ObjectId } = require('mongodb');
 const request = require('request');
@@ -30,28 +31,28 @@ async function getJobsFromRedis() {
         const duration = 24 * 60 * 60;
         await redisClient.set('jobs', JSON.stringify(data), duration);
         return data;
-      } else {
-        return new Error('Error getting response from API')
       }
-    } else {
-      return JSON.parse(cachedJobs);
+      return new Error('Error getting response from API');
     }
+    return JSON.parse(cachedJobs);
   } catch (error) {
     console.error('Error in getJobsFromRedis:', error);
-    throw error; 
+    throw error;
   }
 }
 
 const Jobs = {
   async getJobs(req, res) {
-    const PAGE_LIMIT = 50;
+    const user = await User.getUser(req);
+    const PAGE_LIMIT = 25;
     const offset = req.query.offset || 0;
     const data = await getJobsFromRedis();
+    const jobsSize = data.jobs.length;
     if (data) {
-      const next = offset + PAGE_LIMIT;
-      const jobs = data.jobs.slice(offset, offset + PAGE_LIMIT);
-      if (jobs.length > offset) {
-        return res.render('jobs', { jobs, offset: next });
+      const next = Number(offset) + PAGE_LIMIT;
+      const jobs = data.jobs.slice(offset, next);
+      if (jobsSize > offset) {
+        return res.render('jobs', { jobs, user, offset: next });
       }
     }
     return res.redirect(301, '/');
@@ -63,11 +64,14 @@ const Jobs = {
     if (data) {
       const job = data.jobs.find((job) => job.title === title);
       if (job) {
-        return res.render('job-details', { job });
+        const user = await User.getUser(req, res);
+        const jobViews = user.jobViews ? Number(user.jobViews) + 1 : 1;
+        const score = user.score ? Number(user.score) + 0.2 : 0.2;
+        await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(user._id) }, { $set: { jobViews, score } });
+        return res.render('job-details', { job, user });
       }
     } else {
-      console.log('job not found')
-      return res.status(404).json({error: 'Not Found'});
+      return res.status(404).json({ error: 'Not Found' });
     }
     return res.redirect(301, '/jobboard');
   },
@@ -75,21 +79,25 @@ const Jobs = {
   async postApply(req, res) {
     const userId = await req.redisClient.get(`session:${req.session.id}`);
     if (userId) {
+      const { jobTitle } = req.body;
+      const { jobURL } = req.body;
       const newJob = {
-        userId: ObjectId(userId),
+        jobTitle,
+        jobURL,
         appliedAt: new Date(),
       };
-      await dbClient.client.db(dbClient.database).collection('jobs').insertOne({ newJob });
-      return res.redirect(301, '/jobboard');
+      const user = await User.getUser(req, res);
+      const score = user.score ? Number(user.score) + 0.3 : 0.3;
+      await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $push: { jobs: newJob }, $set: { score } });
+      res.send({ Success: 'Application Saved' });
     }
-    return res.redirect(301, '/login');
   },
 
   async getSearch(req, res) {
-    let payload = req.body.payload.trim();
+    const payload = req.body.payload.trim();
     const data = await getJobsFromRedis();
-    const searchResult = data.jobs.filter(job => job.title.toLowerCase().includes(payload.toLowerCase()));
-    res.send({payload: searchResult});
+    const searchResult = data.jobs.filter((job) => job.title.toLowerCase().includes(payload.toLowerCase()));
+    res.send({ payload: searchResult });
   },
 };
 

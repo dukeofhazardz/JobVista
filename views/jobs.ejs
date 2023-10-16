@@ -1,28 +1,73 @@
 <%- include('header') -%>
 
-<div class>
-    <input type="text" id="search-box" placeholder="Enter Keyword..." onkeyup="sendData(this)">
-    <section id="searchResults">
+<div class = "container">
+<div class="input-group">
+  <div class="form-outline">
+    <input type="search" id="search-box"" class="form-control" placeholder="Enter Keyword..." onkeyup="sendData(this)" />
+    <label class="form-label" for="form1">Search</label>
+  </div>
+
+  
+</div>
+
+  <section id="searchResults">
 
     </section>
-
-    <% jobs.forEach((job)=>{ %>
-    <div class="jobStyle">
-        <h3><%= job.title %></h3>
+  
+    <div class="row mt-2 row-cols-1 row-cols-md-3 g-4">
+           <% jobs.forEach((job)=>{ %>
+  <div class="col">
+    <div class="card">
+        <div class="d-flex">
+      <img src="<%= job.companyLogo %>" class=" text-left img-fluid img-thumbnail hover-shadow w-25" alt="company logo"/>
+        
+      <div>
         <h3><%= job.companyName %></h3>
-        <img width="200px" height="200px" src="<%= job.companyLogo %>"
-            alt="company logo" />
-        <p>
-
-            <%= job.excerpt %>
-        </p>
+   
+      <% if (job.minSalary) { %>
+               <span class="badge badge-primary"> <i class="fas fa-money-bill "></i> $<%= job.minSalary %> - $<%= job.maxSalary %></span>
+                <% } %>
+      </div>
+        </div>
+      <div class="card-body">
+        <h2 class="card-title"><%= job.title %></h2>
       
-        <a href="/jobs/<%= job.title %>">View</a>
-    </div>
-    <% }) %>
-    
      
-    <a href="/jobboard?offset=<%= offset %>">More</a>
+            <% if (job.locationRestrictions.length !== 0) {
+            
+            job.locationRestrictions.forEach((location, index)=>{ %>
+                  <% if (index < 5){ %>
+                    
+            <span class="badge badge-info"><%= location %> <i class="fas fa-location"></i></span>
+            <% } }) }
+            else {%>
+<span class="badge badge-info"> Anywhere <i class="fas fa-location"></i></span>
+           <% } %>
+ <% job.categories.forEach((category, index)=>{ %>
+    <% if (index < 5){ %>
+            <span class="badge badge-secondary"><%= category %></span>
+            <% } }) %>
+      
+      <div class="align-items-right text-right">
+          <a class ="btn btn-primary btn-sm mt-2" href="/jobs/<%= job.title %>">Details  <i class="fas fa-info-circle"></i></a>
+          </div>
+
+      </div>
+    </div>
+  </div>
+
+ <% }) %>
+</div>
+
+ 
+    
+<nav aria-label="Page navigation mt-4">
+  <ul class="pagination pagination-circle justify-content-center">
+   <li class="page-item">
+      <a class="page-link btn" href="/jobboard?offset=<%= offset %>">Next</a>
+    </li>
+  </ul>
+</nav>
    
     <div>
     <script>

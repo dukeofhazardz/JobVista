@@ -1,12 +1,85 @@
 <%- include('header') -%>
-<h1>Hello <%- user.firstName -%></h1>
 
-<p>Edit profile <a href="/settings">edit</a></p>
-<p>Go <a href="/">Home</a></p>
 
-<p>Download resume <a href="/download">download</a></p>
-<form action="/logout" method="POST">
-    <p>Leaving? <button type="submit">Logout</button></p>
-</form>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/users">People</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Profile</li>
+  </ol>
+</nav>
+
+
+<section class="vh-100 w-100" style="background-color: #9de2ff;">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-md-10">
+        <div class="card" style="border-radius: 15px;">
+          <div class="card-body p-4">
+            <div class="d-flex text-black">
+              <div class="flex-grow-1">
+                <img src="<%= user.avatarPath %>"
+                  alt="Profile Image" class="img-fluid rounded-circle mb-2"
+                  style="width: 100px; border-radius: 10px;">
+                  
+              
+                    <embed src="<%= user.resumePath %>" width="350" height="400" type="application/pdf" />
+                    
+              </div>
+
+              <div class="flex-grow-1 ms-3">
+                <h5 class="mb-1 text-uppercase"><i class="fas sm fa-user"></i> <%= user.firstName %> <%= user.lastName %></h5>
+                <p class="mb-1 text-capitalize"> <i class="fas fa-location"></i> <%= user.address %></p>
+                <p class="mb-1 text-capitalize"> <i class="fas fa-envelope"></i> <%= user.email %> </p>
+                <p class="mb-1 text-capitalize"> <i class="fas fa-phone"></i> <%= user.phoneNo %> </p>
+                <p class="mb-2 pb-1 text-capitalize" style="color: #2b2a2a;"> <i class="fas fa-briefcase"></i> <%= user.occupation %> </p>
+                <div class="d-flex justify-content-start rounded-3 p-1 mb-2"
+                  >
+                  <% if (user.jobViews) { %>
+                  <div class="badge badge-secondary">
+                    <p class="small text-muted mb-1"><i class="fas fa-eye"></i> Jobs Viewed</p>
+                    <p class="mb-0">  <%= user.jobViews | 0 %> </p>
+                  </div>
+                  <% } %>
+                   <% if (user.jobs && user.jobs.length > 0) { %>
+                  <div class="px-2 badge badge-secondary">
+                    <p class="small text-muted mb-1"> <i class="fas fa-check"></i> Jobs Applied </p>
+                    <p class="mb-0"><%= user.jobs.length %></p>
+                  </div>
+                    <% } %>
+                   <% if (user.score) { %>
+                  <div class="badge badge-secondary">
+                    <p class="small text-muted mb-1 badge"> <i class="fas fa-spinner"></i> Progress Score </p>
+                    <p class="mb-0"><%= user.score.toFixed(1) | 0%></p>
+                  </div>
+                    <% } %>
+                </div>
+
+                  <% if (user.skills) {
+             const skills = user.skills.split(',') %>
+             <h6 class="mt-2"> Skills </h6>
+            <% skills.forEach((skill, index)=>{ %>
+                  <% if (index < 15){ %>
+                    
+            <span class="badge badge-info"><%= skill %> <i class="fas fa-award"></i></span>
+            <% } }) } %>
+
+
+            <% if (user.jobs.length > 0 ) {
+             %>
+             <h6 class="mt-4"> Latest Jobs Applied </h6>
+            <% for (let i = user.jobs.length-1; i > 0; i--){ %>
+                 
+            <a href="<%= user.jobs[i].jobURL %>"><span class="badge badge-info"><%= user.jobs[i].jobTitle %> <i class="fas fa-briefcase"></i></span></a>
+            <% }  } %>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <%- include('footer') -%>

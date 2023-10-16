@@ -16,7 +16,7 @@ class DBClient {
         } catch (error) {
             console.error('Error connecting to MongoDB:', error.message);
         }
-    }
+  }
     
     isAlive() {
         return this.client.isConnected();
