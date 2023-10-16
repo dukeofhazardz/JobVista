@@ -14,6 +14,28 @@ const User = {
     return res.status(200).json({ 'Number of Users': userCount.toString() });
   },
 
+  async allUsers(req, res) {
+    const users = await dbClient.client.db(dbClient.database).collection('users').find().toArray();
+    if (users) {
+      const userId = await req.redisClient.get(`session:${req.session.id}`);
+      if (userId) {
+        const user = await dbClient.client.db(dbClient.database).collection('users').findOne({ _id: ObjectId(userId) });
+        return res.render('users', { users, user });
+      }
+      return res.render('users', { users, user: '' });
+    }
+    return res.status(404).json({ error: 'No User Found' });
+  },
+
+  async getUser(req, res) {
+    const userId = req.params.userID;
+    if (userId) {
+      const user = await dbClient.client.db(dbClient.database).collection('users').findOne({ _id: ObjectId(userId) });
+      return res.render('profile', { user });
+    }
+    return res.status(404).json({ error: 'User Not Found' });
+  },
+
   async getProfile(req, res) {
     const userId = await req.redisClient.get(`session:${req.session.id}`);
     if (userId) {

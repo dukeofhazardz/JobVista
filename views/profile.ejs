@@ -1,5 +1,15 @@
 <%- include('header') -%>
 
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/users">People</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Profile</li>
+  </ol>
+</nav>
+
+
 <section class="vh-100 w-100" style="background-color: #9de2ff;">
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
@@ -25,21 +35,27 @@
                 <p class="mb-2 pb-1 text-capitalize" style="color: #2b2a2a;"> <i class="fas fa-briefcase"></i> <%= user.occupation %> </p>
                 <div class="d-flex justify-content-start rounded-3 p-1 mb-2"
                   >
+                  <% if (user.jobViews) { %>
                   <div class="badge badge-secondary">
                     <p class="small text-muted mb-1"><i class="fas fa-eye"></i> Jobs Viewed</p>
                     <p class="mb-0">  <%= user.jobViews | 0 %> </p>
                   </div>
+                  <% } %>
+                   <% if (user.jobs && user.jobs.length > 0) { %>
                   <div class="px-2 badge badge-secondary">
                     <p class="small text-muted mb-1"> <i class="fas fa-check"></i> Jobs Applied </p>
                     <p class="mb-0"><%= user.jobs.length %></p>
                   </div>
+                    <% } %>
+                   <% if (user.score) { %>
                   <div class="badge badge-secondary">
                     <p class="small text-muted mb-1 badge"> <i class="fas fa-spinner"></i> Progress Score </p>
                     <p class="mb-0"><%= user.score.toFixed(1) | 0%></p>
                   </div>
+                    <% } %>
                 </div>
 
-                  <% if (user.skills !== '') {
+                  <% if (user.skills) {
              const skills = user.skills.split(',') %>
              <h6 class="mt-2"> Skills </h6>
             <% skills.forEach((skill, index)=>{ %>
@@ -52,11 +68,10 @@
             <% if (user.jobs.length > 0 ) {
              %>
              <h6 class="mt-4"> Latest Jobs Applied </h6>
-            <% user.jobs.forEach((job, index)=>{ %>
-                  <% if (index < 6){ %>
-                    
-            <a href="<%= job.jobURL %>"><span class="badge badge-info"><%= job.jobTitle %> <i class="fas fa-briefcase"></i></span></a>
-            <% } }) } %>
+            <% for (let i = user.jobs.length-1; i > 0; i--){ %>
+                 
+            <a href="<%= user.jobs[i].jobURL %>"><span class="badge badge-info"><%= user.jobs[i].jobTitle %> <i class="fas fa-briefcase"></i></span></a>
+            <% }  } %>
                 
               </div>
             </div>

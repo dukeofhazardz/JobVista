@@ -39,6 +39,8 @@ router.get('/settings', User.getSettings);
 router.post('/settings', User.postSettings);
 router.get('/myprofile', User.getProfile);
 router.get('/download', User.getResume);
+router.get('/users', User.allUsers);
+router.get('/users/:userID', User.getUser);
 router.get('/jobboard', Jobs.getJobs);
 router.get('/jobs/:title', Jobs.getJob);
 router.post('/jobs/search', Jobs.getSearch);

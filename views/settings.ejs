@@ -1,8 +1,17 @@
 <%- include('header') -%>
 <h1>Hello <%- user.firstName -%></h1>
 
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/myprofile">Profile</a></li>
+    <li class="breadcrumb-item  active" aria-current="page">Settings</li>
+  </ol>
+</nav>
+<section class="vh-100 w-100" style="background-color: #9de2ff;">
 <div class="text-center center-div" id="settings">
-    <div class="container w-25 border py-5">
+    <div class="container w-25 border py-5 bg-light" >
         <div class="title pb-5">
             <h2 class="font-weight-bold">Settings</h2>
             <span>Update profile settings</span>
@@ -54,6 +63,7 @@
 
     </div>
 </div>
+</section>
 
 
 

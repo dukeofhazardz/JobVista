@@ -1,0 +1,52 @@
+<%- include('header') -%>
+
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item  active" aria-current="page">People</li>
+  </ol>
+</nav>
+
+<section class="vh-100 w-100" style="background-color: #9de2ff;">
+  <div class="container py-5 h-100">
+
+    <div class="row mt-2 mb-4 row-cols-1 row-cols-md-3 g-4">
+    <% users.forEach((user) => { %>
+      <div class="col">
+        <div class="card" style="border-radius: 15px;">
+          <div class="card-body p-4">
+            <div class="text-black">
+              <div class="">
+                <img src="<%= user.avatarPath %>"
+                  alt="Profile Image" class="img-fluid rounded-circle mb-2"
+                  style="width: 100px; border-radius: 10px;">
+              </div>
+                <h5 class="mb-1 text-uppercase"><i class="fas sm fa-user"></i> <%= user.firstName %> <%= user.lastName %></h5>
+                <p class="mb-1 text-capitalize"> <i class="fas fa-location"></i> <%= user.address %></p>
+
+                  <p class="mb-2 pb-1 text-capitalize" style="color: #2b2a2a;"> <i class="fas fa-briefcase"></i> <%= user.occupation %> </p>
+                  <% if (user.skills) {
+             const skills = user.skills.split(',') %>
+             <h6 class="mt-2"> Skills </h6>
+            <% skills.forEach((skill, index)=>{ %>
+                  <% if (index < 6){ %>
+                    
+            <span class="badge badge-info"><%= skill %> <i class="fas fa-award"></i></span>
+            <% } }) } %>
+
+<br>
+           <a class="btn btn-info" href="/users/<%= user._id %>"> View Profile</a>
+           
+            </div>
+          </div>
+        </div>
+      </div>
+  
+
+    <% }) %>
+      </div>
+  </div>
+</section>
+
+<%- include('footer') -%>
