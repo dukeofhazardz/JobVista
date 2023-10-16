@@ -55,7 +55,7 @@
                               <li class="nav-item">
                                 <a class="nav-link" href="/users">People</a>
                             </li>
-                          <% if (user == null || (user.status && user.status == 404)) { %>
+                          <% if (user == '' || (user.status && user.status == 404)) { %>
                       
                             <li class="nav-item">
                                 <a class="nav-link" href="/signup">Signup</a>
