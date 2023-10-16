@@ -80,37 +80,48 @@ const User = {
         await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { skills } });
       }
       if (req.files) {
-        const { resume } = req.files;
-        const filePath = path.join(STATIC_PATH + RESUME_PATH + user.email, resume.name);
-        const resumeFile = path.join(RESUME_PATH + user.email, resume.name);
-        fs.mkdirSync(STATIC_PATH + RESUME_PATH + user.email, { recursive: true });
-        resume.mv(filePath, (err) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log('Resume uploaded');
-          }
-        });
-
-        await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { resumePath: resumeFile } });
-
-        const { avatar } = req.files;
-        const avatarFilePath = path.join(STATIC_PATH + AVATAR_PATH + user.email, avatar.name);
-        const imageFile = path.join(AVATAR_PATH + user.email, avatar.name);
-        fs.mkdirSync(STATIC_PATH + AVATAR_PATH + user.email, { recursive: true });
-        avatar.mv(avatarFilePath, (err) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log('avatar uploaded');
-          }
-        });
-
-        await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { avatarPath: imageFile } });
-      }
-
-      await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { updatedAt: new Date() } });
-      return res.redirect(301, '/settings');
+        const { resume, avatar } = req.files;
+        if (resume) {
+            const resArray = resume.name.split('.');
+            const ext = resArray[resArray.length - 1];
+            if (ext !== 'pdf') {
+                return res.status(401).json({error: 'resume must be pdf'});
+            }
+            const filePath = path.join(STATIC_PATH + RESUME_PATH + user.email, resume.name);
+            const resumeFile = path.join(RESUME_PATH + user.email, resume.name);
+            fs.mkdirSync(STATIC_PATH + RESUME_PATH + user.email, { recursive: true });
+            resume.mv(filePath, (err) => {
+              if (err) {
+                console.log(err);
+              } else {
+                console.log('Resume uploaded');
+              }
+            });
+    
+            await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { resumePath: resumeFile } });    
+        }
+        if (avatar) {
+            const avArray = avatar.name.split('.');
+            const ext = avArray[avArray.length - 1];
+            if (ext !== 'jpg') {
+                return res.status(401).json({error: 'image must be jpg'});
+            }
+            const avatarFilePath = path.join(STATIC_PATH + AVATAR_PATH + user.email, avatar.name);
+            const imageFile = path.join(AVATAR_PATH + user.email, avatar.name);
+            fs.mkdirSync(STATIC_PATH + AVATAR_PATH + user.email, { recursive: true });
+            avatar.mv(avatarFilePath, (err) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log('avatar uploaded');
+                }
+            });
+            
+            await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { avatarPath: imageFile } });
+        }
+    }
+    await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { updatedAt: new Date() } });
+    return res.redirect(301, '/settings');
     }
     return res.redirect(301, '/login');
   },
