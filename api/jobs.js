@@ -44,14 +44,14 @@ async function getJobsFromRedis() {
 const Jobs = {
   async getJobs(req, res) {
     const PAGE_LIMIT = 25;
-    const offset = Number(req.query.offset) || 0;
+    const offset = req.query.offset || 0;
     const data = await getJobsFromRedis();
+    const jobsSize = data.jobs.length;
     if (data) {
-      const next = offset + PAGE_LIMIT;
-      const jobs = data.jobs.slice(offset, offset + PAGE_LIMIT);
-      if (jobs.length > offset) {
+      const next = Number(offset) + PAGE_LIMIT;
+      const jobs = data.jobs.slice(offset, next);
+      if (jobsSize > offset) {
         const user = await User.getUser(req);
-        console.log(user);
         return res.render('jobs', { jobs, user, offset: next });
       }
     }
