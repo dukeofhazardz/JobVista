@@ -35,12 +35,13 @@ router.get('/login', Auth.getLogin);
 router.post('/signup', Auth.postSignup);
 router.post('/login', Auth.postLogin);
 router.post('/logout', Auth.postLogout);
-router.get('/profile', User.getProfile);
 router.get('/settings', User.getSettings);
 router.post('/settings', User.postSettings);
+router.get('/myprofile', User.getProfile);
 router.get('/download', User.getResume);
 router.get('/jobboard', Jobs.getJobs);
 router.get('/jobs/:title', Jobs.getJob);
 router.post('/jobs/search', Jobs.getSearch);
+router.post('/jobs/apply', Jobs.postApply);
 
 export default router;

@@ -5,10 +5,13 @@ import User from '../utils/helper';
 const path = require('path');
 const fs = require('fs');
 
-const FOLDER_PATH = './job_vista_resumes/';
-const AVATAR_PATH = './job_vista_avatars/';
+const STATIC_PATH = './static/';
+const RESUME_PATH = '/job_vista_resumes/';
+const AVATAR_PATH = '/job_vista_avatars/';
 let resumeFilePath = '';
 let avatarFilePath = '';
+let imageFile = '';
+let resumeFile = '';
 
 const Auth = {
   async getHome(req, res) {
@@ -28,7 +31,7 @@ const Auth = {
 
   async postSignup(req, res) {
     const {
-      firstName, lastName, email, password, phoneNo, address, occupation,
+      firstName, lastName, email, password, phoneNo, address, occupation, skills,
     } = req.body;
     if (!firstName) {
       return res.status(400).json({ error: 'Missing First Name' });
@@ -58,8 +61,9 @@ const Auth = {
     // Uploading resume
     if (req.files) {
       const { resume } = req.files;
-      resumeFilePath = path.join(FOLDER_PATH + email, resume.name);
-      fs.mkdirSync(FOLDER_PATH + email, { recursive: true });
+      resumeFilePath = path.join(STATIC_PATH + RESUME_PATH + email, resume.name);
+      resumeFile = path.join(RESUME_PATH + email, resume.name);
+      fs.mkdirSync(STATIC_PATH + RESUME_PATH + email, { recursive: true });
       resume.mv(resumeFilePath, (err) => {
         if (err) {
           console.log(err);
@@ -69,8 +73,9 @@ const Auth = {
       });
 
       const { avatar } = req.files;
-      avatarFilePath = path.join(AVATAR_PATH + email, avatar.name);
-      fs.mkdirSync(AVATAR_PATH + email, { recursive: true });
+      avatarFilePath = path.join(STATIC_PATH + AVATAR_PATH + email, avatar.name);
+      imageFile = path.join(AVATAR_PATH + email, avatar.name);
+      fs.mkdirSync(STATIC_PATH + AVATAR_PATH + email, { recursive: true });
       avatar.mv(avatarFilePath, (err) => {
         if (err) {
           console.log(err);
@@ -90,8 +95,9 @@ const Auth = {
       phoneNo,
       address,
       occupation,
-      resumePath: resumeFilePath,
-      avatarPath: avatarFilePath,
+      skills,
+      resumePath: resumeFile,
+      avatarPath: imageFile,
       createdAt: new Date(),
       updatedAt: new Date(),
       jobs: [],

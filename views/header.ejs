@@ -72,8 +72,7 @@
                     <ul class="navbar-nav">
                      
                          <li class="nav-item">
-                                <a class="nav-link" href="/profile">My
-                                    profile</a>
+                                <a class="nav-link" href="/myprofile">My profile</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/settings">Settings</a>
@@ -92,17 +91,16 @@
                         <a
                             class="d-flex align-items-center hidden-arrow"
                             href="#"
-                        
                             role="button"
                          
                             aria-expanded="false">
                             <img
-                                src="<%- user.avatarPath %>"
+                                src="<%- (encodeURI(user.avatarPath)) -%>"
                                 
                                 class="rounded-circle"
-                                height="25"
+                                height="40"
                                 alt="avatar"
-                                loading="lazy" />
+                                />
                         </a>
                         <% } %>
                     </div>

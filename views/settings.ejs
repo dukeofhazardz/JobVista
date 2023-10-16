@@ -9,21 +9,37 @@
         </div>
         <form action="/settings" method="POST" class="pt-3" enctype="multipart/form-data">
             <div class="form-outline mb-2">
-                <input type="firstName" class="form-control" name="firstName">
+                <input type="firstName" value="<%= user.firstName %>" class="form-control" name="firstName">
                 <label class="form-label" for="fname">First Name</label>
             </div>
             <div class="form-outline mb-2">
-                <input type="lastName" class="form-control"  name="lastName">
+                <input type="lastName" class="form-control" value="<%= user.lastName %>" name="lastName">
                  <label class="form-label" for="lname">Last Name</label>
             </div>
             <div class="form-outline mb-2">
-                <input type="phoneNo" class="form-control" name="phoneNo">
+                <input type="phoneNo" class="form-control" value="<%= user.phoneNo %>" name="phoneNo">
                 <label class="form-label" for="phoneNo">Phone Number</label>
             </div>
             <div class="form-outline mb-2">
-                <input type="address" class="form-control"  name="address">
+                <input type="address" class="form-control" value="<%= user.address %>"  name="address">
                   <label class="form-label" for="address">Address</label>
             </div>
+            
+<div class="form-outline mb-2">
+                <input type="address" class="form-control" id="occupation"  value="<%= user.occupation %>"  name="occupation">
+                  <label class="form-label" for="occupation">Occupation</label>
+            </div>
+
+<div class="form-outline mb-2">
+                <input type="address" class="form-control" id="skills" value="<%= user.skills %>" name="skills">
+                  <label class="form-label" for="skills">Skills(separated by comma(,))</label>
+            </div>
+
+              <div class="form-outline mb-2">
+                 <label class="form-label" for="avatar">Avatar</label>
+                <input type="file" class="form-control" id="avatar"  name="avatar">
+            </div>
+
             <div class="form-outline mb-2">
                  <label class="form-label" for="resume">Resume/CV</label>
                 <input type="file" class="form-control" placeholder="Resume/CV" name="resume">

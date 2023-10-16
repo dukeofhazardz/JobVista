@@ -20,7 +20,7 @@
         </div>
         
       <div class="card-body">
-        <h2 class="card-title"><%= job.title %></h2>
+        <h2 class="card-title" id="title" ><%= job.title %></h2>
       
        
             <% if (job.locationRestrictions.length !== 0) {
@@ -38,7 +38,7 @@
             <% } }) %>
        
       <div class="align-items-right text-right">
-          <a class ="btn btn-primary btn-sm mt-2" href="<%= job.applicationLink %>">Application  <i class="fas fa-briefcase"></i></a>
+          <a class ="btn btn-primary btn-sm mt-2" href="<%= job.applicationLink %>" onclick="return postApply(event);">Application  <i class="fas fa-briefcase"></i></a>
           </div>
       </div>
 
@@ -49,7 +49,7 @@
       </div>
 
        <div class="text-center mb-4">
-      <a class ="btn btn-primary btn-sm mt-2" href="<%= job.applicationLink %>">Goto Application  <i class="fas fa-briefcase"></i></a>
+      <a class ="btn btn-primary btn-sm mt-2" href="<%= job.applicationLink %>" onclick="return postApply(event);">Goto Application  <i class="fas fa-briefcase"></i></a>
      
  </div>
     </div>
@@ -57,4 +57,22 @@
 
     <div>
 
+
+       <script>
+        function postApply(e) {
+          e.preventDefault();
+            const jobTitle = document.getElementById('title').innerText;
+            const jobURL = e.srcElement.attributes.href.textContent;  
+            console.log(jobTitle, jobURL);
+                fetch('/jobs/apply', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({jobTitle, jobURL})
+                }).then(res => res.json()).then(data => {
+                  console.log(data);
+            window.location = e.srcElement.attributes.href.textContent;
+                });
+                return;
+        }
+        </script>
 <%- include('footer') -%>
