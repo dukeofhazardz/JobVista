@@ -12,28 +12,30 @@
 
 <section class="vh-100 w-100" style="background-color: #9de2ff;">
   <div class="container py-5 h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="row  justify-content-center align-items-center h-100">
       <div class="col-md-10">
         <div class="card" style="border-radius: 15px;">
           <div class="card-body p-4">
-            <div class="d-flex text-black">
-              <div class="flex-grow-1">
+            <div class="text-black">
+              <div class="row">
+              <div class="col-md-6 col-sm-12 col-lg-6">
                 <img src="<%= user.avatarPath %>"
                   alt="Profile Image" class="img-fluid rounded-circle mb-2"
                   style="width: 100px; border-radius: 10px;">
+                <h5 class="mb-1 text-uppercase"><i class="fas sm fa-user"></i> <%= user.firstName %> <%= user.lastName %></h5>
                   
-              
-                    <embed src="<%= user.resumePath %>" width="350" height="400" type="application/pdf" />
-                    
+              <div>
+                    <embed src="<%= user.resumePath %>" width="300" height="400" type="application/pdf" />
+                    </div>
               </div>
 
+              <div class="col-md-6 col-sm-12 col-lg-6">
               <div class="flex-grow-1 ms-3">
-                <h5 class="mb-1 text-uppercase"><i class="fas sm fa-user"></i> <%= user.firstName %> <%= user.lastName %></h5>
                 <p class="mb-1 text-capitalize"> <i class="fas fa-location"></i> <%= user.address %></p>
                 <p class="mb-1 text-capitalize"> <i class="fas fa-envelope"></i> <%= user.email %> </p>
                 <p class="mb-1 text-capitalize"> <i class="fas fa-phone"></i> <%= user.phoneNo %> </p>
                 <p class="mb-2 pb-1 text-capitalize" style="color: #2b2a2a;"> <i class="fas fa-briefcase"></i> <%= user.occupation %> </p>
-                <div class="d-flex justify-content-start rounded-3 p-1 mb-2"
+                <div class=" justify-content-start rounded-3 p-1 mb-2"
                   >
                   <% if (user.jobViews) { %>
                   <div class="badge badge-secondary">
@@ -74,6 +76,8 @@
             <% }  } %>
                 
               </div>
+              </div>
+            </div>
             </div>
           </div>
         </div>

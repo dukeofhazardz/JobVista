@@ -132,7 +132,7 @@ const Auth = {
     }
     const user = await dbClient.client.db(dbClient.database).collection('users').findOne({ email, hashedPassword: sha1(password) });
     if (!user) {
-      return res.status(400).json({ error: 'Password is incorrect' });
+    return res.status(400).json({ error: 'Password is incorrect' });
     }
     const userId = user._id.toString();
     const duration = 24 * 60 * 60; // 24 hours (in seconds)
