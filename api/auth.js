@@ -69,6 +69,11 @@ const Auth = {
     // Uploading resume
     if (req.files) {
       const { resume } = req.files;
+      const resArray = resume.name.split('.');
+      const ext = resArray[resArray.length - 1];
+      if (ext !== 'pdf') {
+        return res.status(401).json({error: 'resume must be pdf'});
+      }
       resumeFilePath = path.join(STATIC_PATH + RESUME_PATH + email, resume.name);
       resumeFile = path.join(RESUME_PATH + email, resume.name);
       fs.mkdirSync(STATIC_PATH + RESUME_PATH + email, { recursive: true });
@@ -81,6 +86,11 @@ const Auth = {
       });
 
       const { avatar } = req.files;
+      const avArray = avatar.name.split('.');
+      const extn = avArray[avArray.length - 1];
+      if (extn !== 'jpg') {
+        return res.status(401).json({error: 'image must be jpg'});
+      }
       avatarFilePath = path.join(STATIC_PATH + AVATAR_PATH + email, avatar.name);
       imageFile = path.join(AVATAR_PATH + email, avatar.name);
       fs.mkdirSync(STATIC_PATH + AVATAR_PATH + email, { recursive: true });

@@ -84,38 +84,53 @@ const User = {
         await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { skills } });
       }
       if (req.files) {
-        const { resume } = req.files;
-        const filePath = path.join(STATIC_PATH + RESUME_PATH + user.email, resume.name);
-        const resumeFile = path.join(RESUME_PATH + user.email, resume.name);
-        fs.mkdirSync(STATIC_PATH + RESUME_PATH + user.email, { recursive: true });
-        resume.mv(filePath, (err) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log('Resume uploaded');
-          }
-        });
-
-        await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { resumePath: resumeFile } });
-
-        const { avatar } = req.files;
-        const avatarFilePath = path.join(STATIC_PATH + AVATAR_PATH + user.email, avatar.name);
-        const imageFile = path.join(AVATAR_PATH + user.email, avatar.name);
-        fs.mkdirSync(STATIC_PATH + AVATAR_PATH + user.email, { recursive: true });
-        avatar.mv(avatarFilePath, (err) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log('avatar uploaded');
-          }
-        });
-
-        await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { avatarPath: imageFile } });
-      }
-
-      await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { updatedAt: new Date() } });
-      req.flash('message', 'setting updated');
-      return res.redirect(301, '/settings');
+        const { resume, avatar } = req.files;
+        if (resume) {
+            const resArray = resume.name.split('.');
+            const ext = resArray[resArray.length - 1];
+            if (ext !== 'pdf') {
+                req.flash('message', 'resume must be pdf');
+                return res.redirect(301, '/settings');
+            }
+            const filePath = path.join(STATIC_PATH + RESUME_PATH + user.email, resume.name);
+            const resumeFile = path.join(RESUME_PATH + user.email, resume.name);
+            fs.mkdirSync(STATIC_PATH + RESUME_PATH + user.email, { recursive: true });
+            resume.mv(filePath, (err) => {
+              if (err) {
+                console.log(err);
+              } else {
+                console.log('Resume uploaded');
+              }
+            });
+    
+            await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { resumePath: resumeFile } });    
+        }
+        if (avatar) {
+            const avArray = avatar.name.split('.');
+            const ext = avArray[avArray.length - 1];
+            const extArr = ['jpg','jpeg','png','PNG'];
+            if (!extArr.includes[ext]){
+                req.flash('message', 'avatar must be an image');
+                return res.redirect(301, '/settings');
+            }
+            const avatarFilePath = path.join(STATIC_PATH + AVATAR_PATH + user.email, avatar.name);
+            const imageFile = path.join(AVATAR_PATH + user.email, avatar.name);
+            fs.mkdirSync(STATIC_PATH + AVATAR_PATH + user.email, { recursive: true });
+            avatar.mv(avatarFilePath, (err) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log('avatar uploaded');
+                }
+            });
+            
+            await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { avatarPath: imageFile } });
+        }
+    }
+    await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { updatedAt: new Date() } });
+    
+    req.flash('message', 'Profile updated');
+    return res.redirect(301, '/settings');
     }
     req.flash('message', 'could not update profile');
     return res.redirect(301, '/settings');
