@@ -106,10 +106,10 @@ const User = {
             await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { resumePath: resumeFile } });    
         }
         if (avatar) {
-            const avArray = avatar.name.split('.');
-            const ext = avArray[avArray.length - 1];
-            const extArr = ['jpg','jpeg','png','PNG'];
-            if (!extArr.includes[ext]){
+          const avArray = avatar.name.split('.');
+          const ext = avArray[avArray.length - 1];
+            const extArray = ['jpg', 'jpeg', 'png', 'PNG'];
+            if (!extArray.includes(ext)) {
                 req.flash('message', 'avatar must be an image');
                 return res.redirect(301, '/settings');
             }

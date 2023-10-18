@@ -16,7 +16,7 @@ let resumeFile = '';
 const Auth = {
   async getHome(req, res) {
     const user = await User.getUser(req);
-    return res.redirect(301, '/jobboard', { user, message: req.flash('message')});
+    return res.redirect(301, '/jobboard', { user, message: req.flash('message') });
   },
 
   async getSignup(req, res) {
@@ -72,7 +72,8 @@ const Auth = {
       const resArray = resume.name.split('.');
       const ext = resArray[resArray.length - 1];
       if (ext !== 'pdf') {
-        return res.status(401).json({error: 'resume must be pdf'});
+        req.flash('message', 'resume must be a pdf');
+        return res.redirect(301, '/signup');
       }
       resumeFilePath = path.join(STATIC_PATH + RESUME_PATH + email, resume.name);
       resumeFile = path.join(RESUME_PATH + email, resume.name);
@@ -87,9 +88,11 @@ const Auth = {
 
       const { avatar } = req.files;
       const avArray = avatar.name.split('.');
-      const extn = avArray[avArray.length - 1];
-      if (extn !== 'jpg') {
-        return res.status(401).json({error: 'image must be jpg'});
+      const avExt = avArray[avArray.length - 1];
+      const extArray = ['jpg', 'jpeg', 'png', 'PNG'];
+      if (!extArray.includes(avExt)) {
+        req.flash('message', 'avatar must be an image');
+        return res.redirect(301, '/signup');
       }
       avatarFilePath = path.join(STATIC_PATH + AVATAR_PATH + email, avatar.name);
       imageFile = path.join(AVATAR_PATH + email, avatar.name);
@@ -122,7 +125,7 @@ const Auth = {
     };
     await dbClient.client.db(dbClient.database).collection('users').insertOne(newUser);
     res.cookie('email');
-    req.flash.message('registration successful, you can now login.');
+    req.flash('message','Registration successful, you can now login.');
     return res.redirect(301, '/login');
   },
 
