@@ -22,18 +22,21 @@ const User = {
         const user = await dbClient.client.db(dbClient.database).collection('users').findOne({ _id: ObjectId(userId) });
         return res.render('users', { users, user });
       }
-      return res.render('users', { users, user: '' });
+      return res.render('users', { users, message: req.flash('message') });
     }
-    return res.status(404).json({ error: 'No User Found' });
+    req.flash('message', 'No user found');
+    return res.redirect(301, '/');
   },
 
   async getUser(req, res) {
     const userId = req.params.userID;
     if (userId) {
       const user = await dbClient.client.db(dbClient.database).collection('users').findOne({ _id: ObjectId(userId) });
-      return res.render('profile', { user });
+        return res.render('profile', { user });
     }
-    return res.status(404).json({ error: 'User Not Found' });
+
+    req.flash('message', 'User not found');
+    return res.redirect(301, '/users');
   },
 
   async getProfile(req, res) {
@@ -42,6 +45,7 @@ const User = {
       const user = await dbClient.client.db(dbClient.database).collection('users').findOne({ _id: ObjectId(userId) });
       return res.render('profile', { user });
     }
+    req.flash('message', 'Error retrieving profile');
     return res.redirect(301, '/login');
   },
 
@@ -49,7 +53,7 @@ const User = {
     const userId = await req.redisClient.get(`session:${req.session.id}`);
     if (userId) {
       const user = await dbClient.client.db(dbClient.database).collection('users').findOne({ _id: ObjectId(userId) });
-      return res.render('settings', { user });
+      return res.render('settings', { user, message: req.flash('message') });
     }
     return res.redirect(301, '/login');
   },
@@ -85,7 +89,8 @@ const User = {
             const resArray = resume.name.split('.');
             const ext = resArray[resArray.length - 1];
             if (ext !== 'pdf') {
-                return res.status(401).json({error: 'resume must be pdf'});
+                req.flash('message', 'resume must be pdf');
+                return res.redirect(301, '/settings');
             }
             const filePath = path.join(STATIC_PATH + RESUME_PATH + user.email, resume.name);
             const resumeFile = path.join(RESUME_PATH + user.email, resume.name);
@@ -101,10 +106,12 @@ const User = {
             await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { resumePath: resumeFile } });    
         }
         if (avatar) {
-            const avArray = avatar.name.split('.');
-            const ext = avArray[avArray.length - 1];
-            if (ext !== 'jpg') {
-                return res.status(401).json({error: 'image must be jpg'});
+          const avArray = avatar.name.split('.');
+          const ext = avArray[avArray.length - 1];
+            const extArray = ['jpg', 'jpeg', 'png', 'PNG'];
+            if (!extArray.includes(ext)) {
+                req.flash('message', 'avatar must be an image');
+                return res.redirect(301, '/settings');
             }
             const avatarFilePath = path.join(STATIC_PATH + AVATAR_PATH + user.email, avatar.name);
             const imageFile = path.join(AVATAR_PATH + user.email, avatar.name);
@@ -121,9 +128,12 @@ const User = {
         }
     }
     await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $set: { updatedAt: new Date() } });
+    
+    req.flash('message', 'Profile updated');
     return res.redirect(301, '/settings');
     }
-    return res.redirect(301, '/login');
+    req.flash('message', 'could not update profile');
+    return res.redirect(301, '/settings');
   },
 
   async getResume(req, res) {
@@ -140,7 +150,7 @@ const User = {
         const fileStream = fs.createReadStream(filePath);
         fileStream.pipe(res);
       } else {
-        res.status(404).json({ error: 'File not found' });
+        req.flash('message', 'File not found');
       }
     }
 

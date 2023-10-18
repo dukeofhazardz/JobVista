@@ -2,7 +2,6 @@ import routes from './routes';
 
 const session = require('express-session');
 const flash = require('connect-flash');
-
 const path = require('path');
 const express = require('express');
 const upload = require('express-fileupload');
@@ -21,7 +20,6 @@ app.use(flash());
 app.use(upload());
 app.use('/', routes);
 app.use(express.static(path.join(__dirname, 'static')));
-
 app.listen(port, (err) => {
   if (err) {
     console.log(`Error connecting to server: ${err}`);

@@ -9,8 +9,7 @@ const User = {
       const user = await dbClient.client.db(dbClient.database).collection('users').findOne({ _id: ObjectId(userId) });
       return user;
     }
-
-    return { status: 404, error: 'User Not found' };
+    return { status: 404, error: 'User not found' };
   },
 };
 export default User;

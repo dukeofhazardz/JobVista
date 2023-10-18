@@ -55,6 +55,7 @@ const Jobs = {
         return res.render('jobs', { jobs, user, offset: next });
       }
     }
+    req.flash('message', 'No Jobs Found');
     return res.redirect(301, '/');
   },
 
@@ -70,9 +71,8 @@ const Jobs = {
         await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(user._id) }, { $set: { jobViews, score } });
         return res.render('job-details', { job, user });
       }
-    } else {
-      return res.status(404).json({ error: 'Not Found' });
     }
+    req.flash('message', 'Job not found');
     return res.redirect(301, '/jobboard');
   },
 
@@ -89,7 +89,9 @@ const Jobs = {
       const user = await User.getUser(req, res);
       const score = user.score ? Number(user.score) + 0.3 : 0.3;
       await dbClient.client.db(dbClient.database).collection('users').updateOne({ _id: ObjectId(userId) }, { $push: { jobs: newJob }, $set: { score } });
-      res.send({ Success: 'Application Saved' });
+      res.send({ success: 'Application Saved' });
+    } else {
+      res.send({ error: 'You need to login first' });
     }
   },
 

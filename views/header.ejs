@@ -56,7 +56,7 @@
                               <li class="nav-item">
                                 <a class="nav-link" href="/users">People</a>
                             </li>
-                          <% if (user == '' || (user.status && user.status == 404)) { %>
+                          <% if (typeof user === 'undefined' ||(user.status && user.status == 404)) { %>
                       
                             <li class="nav-item">
                                 <a class="nav-link" href="/signup">Signup</a>
@@ -115,7 +115,13 @@
         </nav>
         <!-- Navbar -->
 
-      
+    
+<% if(typeof message !== 'undefined' && message.length > 0) {%>
+<div class="alert alert-info">
+  <%= message  %>
+</div>
+<% } %>
+
    
 
    

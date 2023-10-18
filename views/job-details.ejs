@@ -1,7 +1,7 @@
 <%- include('header') -%>
 
 <div class="container">
-    
+    <div id="alert" class="alert"></div>
 
     <div class="card">
         <div class="row row-cols-1 row-cols-md-3 g-2">
@@ -69,8 +69,16 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({jobTitle, jobURL})
                 }).then(res => res.json()).then(data => {
-                  console.log(data);
+        
+            if (typeof data.error !== 'undefined'){
+            const errorMsg = data.error;
+            const alert = document.getElementById('alert');
+            alert.classList.add('alert-danger');
+            alert.innerHTML = errorMsg;
+            }
+            else{
             window.location = e.srcElement.attributes.href.textContent;
+            }
                 });
                 return;
         }
