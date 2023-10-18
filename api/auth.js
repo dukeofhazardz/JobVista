@@ -16,17 +16,17 @@ let resumeFile = '';
 const Auth = {
   async getHome(req, res) {
     const user = await User.getUser(req);
-    return res.redirect(301, '/jobboard', { user });
+    return res.redirect(301, '/jobboard', { user, message: req.flash('message')});
   },
 
   async getSignup(req, res) {
     const user = await User.getUser(req);
-    return res.render('signup', { user });
+    return res.render('signup', { user, message: req.flash('message') });
   },
 
   async getLogin(req, res) {
     const user = await User.getUser(req);
-    return res.render('login', { user });
+    return res.render('login', { user, message: req.flash('message') });
   },
 
   async postSignup(req, res) {
@@ -34,29 +34,37 @@ const Auth = {
       firstName, lastName, email, password, phoneNo, address, occupation, skills,
     } = req.body;
     if (!firstName) {
-      return res.status(400).json({ error: 'Missing First Name' });
+      req.flash('message', 'Missing First Name');
+      return res.redirect(301, '/signup');
     }
     if (!lastName) {
-      return res.status(400).json({ error: 'Missing Last Name' });
+      req.flash('message', 'Missing Last Name');
+      return res.redirect(301, '/signup');
     }
     if (!email) {
-      return res.status(400).json({ error: 'Missing Email' });
+      req.flash('message', 'Missing Email');
+      return res.redirect(301, '/signup');
     }
     if (!password) {
-      return res.status(400).json({ error: 'Missing Password' });
+      req.flash('message', 'Missing Password');
+      return res.redirect(301, '/signup');
     }
     if (!phoneNo) {
-      return res.status(400).json({ error: 'Missing Phone Number' });
+      req.flash('message', 'Missing Phone Number');
+      return res.redirect(301, '/signup');
     }
     if (!address) {
-      return res.status(400).json({ error: 'Missing Address' });
+      req.flash('message', 'Missing Address');
+      return res.redirect(301, '/signup');
     }
     if (!occupation) {
-      return res.status(400).json({ error: 'Missing Occupation' });
+      req.flash('message', 'Missing Occupation');
+      return res.redirect(301, '/signup');
     }
     const existingUser = await dbClient.client.db(dbClient.database).collection('users').findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: 'User already exist' });
+      req.flash('message', 'User already exist');
+      return res.redirect(301, '/signup');
     }
     // Uploading resume
     if (req.files) {
@@ -104,6 +112,7 @@ const Auth = {
     };
     await dbClient.client.db(dbClient.database).collection('users').insertOne(newUser);
     res.cookie('email');
+    req.flash.message('registration successful, you can now login.');
     return res.redirect(301, '/login');
   },
 
@@ -111,23 +120,27 @@ const Auth = {
     const { email, password } = req.body;
 
     if (!email) {
-      return res.status(400).json({ error: 'Missing email' });
+      req.flash('message', 'Missing email');
+      return res.redirect(301, '/login');
     }
     if (!password) {
-      return res.status(400).json({ error: 'Missing password' });
+      req.flash('message', 'Missing password');
+      return res.redirect(301, '/login');
     }
     const userCheck = await dbClient.client.db(dbClient.database).collection('users').findOne({ email });
     if (!userCheck) {
-      return res.status(400).json({ error: `User with ${email} does not exist` });
+      req.flash('message', `User with ${email} does not exist`);
+      return res.redirect(301, '/login');
     }
     const user = await dbClient.client.db(dbClient.database).collection('users').findOne({ email, hashedPassword: sha1(password) });
     if (!user) {
-    return res.status(400).json({ error: 'Password is incorrect' });
+      req.flash('message', 'Password is incorrect');
+      return res.redirect(301, '/login');
     }
     const userId = user._id.toString();
     const duration = 24 * 60 * 60; // 24 hours (in seconds)
     await req.redisClient.set(`session:${req.session.id}`, userId, duration);
-    return res.redirect(301, '/');
+    return res.redirect(301, '/myprofile');
   },
 
   async postLogout(req, res) {
