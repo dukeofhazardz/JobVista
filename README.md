@@ -18,6 +18,8 @@ JobVista is not just a job board; it's your personalized career companion. Wheth
 
 🔒 **Privacy and Security:** Trust that your data is handled with the utmost care. JobVista prioritizes your privacy and ensures a secure job-seeking environment.
 
+🔔 **Job Alerts**: Jobvista offers job alert notifications, so you can stay updated on new job postings that match your preferences. This ensures that you don't miss out on any relevant opportunities.
+
 ### Get Started!
 
 Ready to embark on your next career adventure? Join JobVista today and open the door to a world of opportunities. Your dream job awaits!
