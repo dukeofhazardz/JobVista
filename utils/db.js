@@ -2,11 +2,10 @@ const { MongoClient } = require('mongodb');
 
 class DBClient {
     constructor() {
-        this.host = 'localhost';
-        this.port = 27017;
+        this.password = ""
         this.database = 'job_vista';
-        this.url = `mongodb://${this.host}:${this.port}/${this.database}`;
-        this.client = new MongoClient(this.url, {useUnifiedTopology: true});
+        this.uri = `mongodb://mongodb+srv://nnaemekaxjohn:nnaemeka1@jobvista-cluster-vercel.kwbf3oc.mongodb.net/?retryWrites=true&w=majority&appName=Jobvista-cluster-vercel`;
+        this.client = new MongoClient(this.uri, {useUnifiedTopology: true});
         this.connect();
     }
     async connect() {

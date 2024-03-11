@@ -2,7 +2,7 @@ import { createClient } from "redis";
 
 class RedisClient {
     constructor() {
-        this.client = createClient().on('error', (err) => {
+        this.client = createClient({url: "rediss://default:AVNS_ocvD9VgpdzpUfBrf2cv@jobvista-cache-dj71286-bed9.a.aivencloud.com:15629"}).on('error', (err) => {
             console.log(err);
         });
     }
