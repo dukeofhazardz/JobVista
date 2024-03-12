@@ -1,3 +1,4 @@
 node_modules
 static/job_vista_resumes/*
 static/job_vista_avatars/*
+.env
