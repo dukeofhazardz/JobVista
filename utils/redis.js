@@ -1,19 +1,21 @@
-import { createClient } from "redis";
+const Redis = require("ioredis");
+
+const redisURI = "rediss://default:AVNS_ocvD9VgpdzpUfBrf2cv@jobvista-cache-dj71286-bed9.a.aivencloud.com:15629";
 
 class RedisClient {
     constructor() {
-        this.client = createClient({url: "rediss://default:AVNS_ocvD9VgpdzpUfBrf2cv@jobvista-cache-dj71286-bed9.a.aivencloud.com:15629"}).on('error', (err) => {
-            console.log(err);
+        this.redis = new Redis(redisURI, {
+            maxRetriesPerRequest: 3
         });
-    }
 
-    isAlive() {
-        return this.client.connected;
+        this.redis.on("error", (err) => {
+            console.error("Redis error:", err);
+        });
     }
 
     async get(key) {
         return new Promise((resolve, reject) => {
-            this.client.get(key, (err, reply) => {
+            this.redis.get(key, (err, reply) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -25,7 +27,7 @@ class RedisClient {
     
     async set(key, value, duration) {
         return new Promise((resolve, reject) => {
-            this.client.setex(key, duration, value, (err, reply) => {
+            this.redis.set(key, value, "EX", duration, (err, reply) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -37,7 +39,7 @@ class RedisClient {
     
     async del(key) {
         return new Promise((resolve, reject) => {
-            this.client.del(key, (err, reply) => {
+            this.redis.del(key, (err, reply) => {
                 if (err) {
                     reject(err);
                 } else {

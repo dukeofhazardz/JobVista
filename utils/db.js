@@ -2,10 +2,25 @@ const { MongoClient } = require('mongodb');
 
 class DBClient {
     constructor() {
-        this.password = ""
-        this.database = 'job_vista';
-        this.uri = `mongodb://mongodb+srv://nnaemekaxjohn:nnaemeka1@jobvista-cluster-vercel.kwbf3oc.mongodb.net/?retryWrites=true&w=majority&appName=Jobvista-cluster-vercel`;
-        this.client = new MongoClient(this.uri, {useUnifiedTopology: true});
+        this.username = "nnaemekaxjohn";
+        this.password = "nnaemeka1";
+
+        const encodedUsername = encodeURIComponent(this.username);
+        const encodedPassword = encodeURIComponent(this.password);
+
+        this.uri = `mongodb://${encodedUsername}:${encodedPassword}@jobvista-cluster-vercel.kwbf3oc.mongodb.net`;
+        this.options = {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            authSource: 'admin', // Specify the authentication database
+            retryWrites: true,
+            writeConcern: {
+                w: 'majority'
+            },
+            appName: 'Jobvista-cluster-vercel'
+        };
+        
+        this.client = new MongoClient(this.uri, this.options);
         this.connect();
     }
     async connect() {
