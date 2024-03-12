@@ -1,6 +1,10 @@
+require("dotenv").config();
 const Redis = require("ioredis");
 
-const redisURI = "rediss://default:AVNS_ocvD9VgpdzpUfBrf2cv@jobvista-cache-dj71286-bed9.a.aivencloud.com:15629";
+const username = process.env.REDIS_USERNAME;
+const password = process.env.REDIS_PASSWORD;
+
+const redisURI = `rediss://${username}:${password}@jobvista-cache-dj71286-bed9.a.aivencloud.com:15629`;
 
 class RedisClient {
     constructor() {
