@@ -1,4 +1,5 @@
 import routes from './routes';
+import dbClient from './utils/db';
 
 const session = require('express-session');
 const flash = require('connect-flash');
@@ -20,11 +21,13 @@ app.use(flash());
 app.use(upload());
 app.use('/', routes);
 app.use(express.static(path.join(__dirname, 'static')));
-app.listen(port, (err) => {
-  if (err) {
-    console.log(`Error connecting to server: ${err}`);
-  }
-  console.log(`Server running on port ${port}`);
+dbClient.connect().then(() => {
+  app.listen(port, (err) => {
+    if (err) {
+      console.log(`Error connecting to server: ${err}`);
+    }
+    console.log(`Server running on port ${port}`)
+  });
 });
 
 export default app;
