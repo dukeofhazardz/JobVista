@@ -6,8 +6,8 @@
     "scripts": {
         "lint": "./node_modules/.bin/eslint",
         "check-lint": "lint [0-9]*.js",
-        "start-server": "nodemon --exec babel-node --presets @babel/preset-env server.js",
-        "dev": "nodemon --exec babel-node --presets @babel/preset-env",
+        "start-server": "node server.js",
+        "dev": "nodemon --exec babel-node --presets @babel/preset-env server.js",
         "test": "./node_modules/.bin/mocha --require @babel/register --exit"
     },
     "author": "",
