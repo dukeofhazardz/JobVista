@@ -1,0 +1,15 @@
+# Ignore development dependencies
+node_modules/
+npm-debug.log*
+
+# Ignore files generated during development or build
+.eslintcache
+.babelrc
+.nyc_output/
+
+# Ignore any local environment variables or configuration files
+.env
+
+# Ignore files related to version control
+.git
+.gitignore
