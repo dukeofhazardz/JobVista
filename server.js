@@ -1,4 +1,4 @@
-import routes from '../routes';
+import routes from './routes';
 
 const session = require('express-session');
 const flash = require('connect-flash');
@@ -9,7 +9,7 @@ const upload = require('express-fileupload');
 const port = 4000;
 const app = express();
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../views'));
+app.set('views', path.join(__dirname, 'views'));
 app.use(session({
   secret: 'something',
   cookie: { maxAge: 60000 },
