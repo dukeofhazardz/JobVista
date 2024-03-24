@@ -12,7 +12,8 @@ const __dirname = path.dirname(__filename);
 const port = 4000;
 const app = express();
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('../views', path.join(__dirname, '../views'));
+app.use(express.static(__dirname + "../img"));
 app.use(session({
   secret: 'something',
   cookie: { maxAge: 60000 },
