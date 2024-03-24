@@ -1,4 +1,4 @@
-import { router } from '../routes/index.js';
+import { router } from '../routes/routes.js';
 import dbClient from '../utils/db.js';
 import express from 'express';
 import session from 'express-session';

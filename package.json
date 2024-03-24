@@ -2,13 +2,13 @@
     "name": "job_vista",
     "version": "1.0.0",
     "description": "",
-    "main": "server.js",
+    "main": "index.js",
     "type": "module",
     "scripts": {
         "lint": "./node_modules/.bin/eslint",
         "check-lint": "lint [0-9]*.js",
-        "start": "node api/server.js",
-        "dev": "nodemon api/server.js",
+        "start": "node api/index.js",
+        "dev": "nodemon api/index.js",
         "test": "./node_modules/.bin/mocha"
     },
     "author": "",
