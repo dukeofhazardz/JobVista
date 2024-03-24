@@ -1,6 +1,7 @@
-import dbClient from './db';
+import dbClient from './db.js';
 
-const { ObjectId } = require('mongodb');
+import pkg from 'mongodb';
+const { ObjectId } = pkg;
 
 const User = {
   async getUser(req) {

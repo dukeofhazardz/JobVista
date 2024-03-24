@@ -1,10 +1,10 @@
-import Auth from '../api/auth';
-import User from '../api/user';
-import Jobs from '../api/jobs';
-import redisClient from '../utils/redis';
+import Auth from '../controller/auth.js';
+import User from '../controller/user.js';
+import Jobs from '../controller/jobs.js';
+import { redisClient } from '../utils/redis.js';
 
-const express = require('express');
-const session = require('express-session');
+import express from 'express';
+import session from 'express-session';
 
 const router = express.Router();
 router.use(express.json());
@@ -46,4 +46,4 @@ router.get('/jobs/:title', Jobs.getJob);
 router.post('/jobs/search', Jobs.getSearch);
 router.post('/jobs/apply', Jobs.postApply);
 
-export default router;
+export { router };

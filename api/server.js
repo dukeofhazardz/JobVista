@@ -1,16 +1,18 @@
-import routes from './routes';
-import dbClient from './utils/db';
+import { router } from '../routes/index.js';
+import dbClient from '../utils/db.js';
+import express from 'express';
+import session from 'express-session';
+import flash from 'connect-flash';
+import path from 'path';
+import upload from 'express-fileupload';
+import { fileURLToPath } from 'url';
 
-const session = require('express-session');
-const flash = require('connect-flash');
-const path = require('path');
-const express = require('express');
-const upload = require('express-fileupload');
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const port = 4000;
 const app = express();
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('../views', path.join(__dirname, 'views'));
 app.use(session({
   secret: 'something',
   cookie: { maxAge: 60000 },
@@ -19,7 +21,7 @@ app.use(session({
 }));
 app.use(flash());
 app.use(upload());
-app.use('/', routes);
+app.use('/', router);
 app.use(express.static(path.join(__dirname, 'static')));
 dbClient.connect().then(() => {
   app.listen(port, (err) => {
@@ -30,4 +32,3 @@ dbClient.connect().then(() => {
   });
 });
 
-export default app;

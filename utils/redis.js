@@ -1,5 +1,6 @@
-require("dotenv").config();
-const Redis = require("ioredis");
+import dotenv from "dotenv";
+dotenv.config();
+import { Redis } from "ioredis";
 
 const username = process.env.REDIS_USERNAME;
 const password = process.env.REDIS_PASSWORD;
@@ -55,4 +56,4 @@ class RedisClient {
 }
 
 const redisClient = new RedisClient();
-module.exports = redisClient;
+export { redisClient };
